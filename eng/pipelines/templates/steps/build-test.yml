@@ -45,7 +45,6 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="${{ parameters.ToxTestEnv }}"
         --injected-packages="${{ parameters.InjectedPackages }}"
-        ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
 
   - ${{ parameters.AfterTestSteps }}
