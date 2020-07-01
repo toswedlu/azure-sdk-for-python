@@ -35,7 +35,7 @@ steps:
   - ${{ parameters.BeforeTestSteps }}
 
   - task: PythonScript@0
-    displayName: 'Run Tests'
+    displayName: 'Run Dev Tests'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
@@ -44,7 +44,37 @@ steps:
         ${{ parameters.CoverageArg }}
         --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="${{ parameters.ToxTestEnv }}"
+        --toxenv="whl,sdist"
+        --injected-packages="${{ parameters.InjectedPackages }}"
+        ${{ parameters.ToxEnvParallel }}
+    env: ${{ parameters.EnvVars }}
+
+  - task: PythonScript@0
+    displayName: 'Run Import Test'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}"
+        ${{ parameters.AdditionalTestArgs }}
+        ${{ parameters.CoverageArg }}
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="depends"
+        --injected-packages="${{ parameters.InjectedPackages }}"
+        ${{ parameters.ToxEnvParallel }}
+    env: ${{ parameters.EnvVars }}
+
+  - task: PythonScript@0
+    displayName: 'Run Min/Max Dependencies Test'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}"
+        ${{ parameters.AdditionalTestArgs }}
+        ${{ parameters.CoverageArg }}
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="latestdependency,mindependency"
         --injected-packages="${{ parameters.InjectedPackages }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
